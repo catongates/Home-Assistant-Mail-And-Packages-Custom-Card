@@ -150,12 +150,13 @@ class MailAndPackagesCard extends LitElement {
     `
     : ""}
     </ul>
+    <hr class="divider">
     ${deliveries_message
     ? html`
     <p>${deliveries_message}</p>
     `
     : ""}
-    <ul class="items space-center">
+    <ul class="items carriers">
     ${usps_mail
         ? html`
         <li class="item"><span class="mail-ha-icon">
@@ -303,6 +304,14 @@ class MailAndPackagesCard extends LitElement {
                 .item {
                     flex: 0 1 30%;
                     margin-bottom: .5rem;
+                }
+                .carriers .item {
+                    flex: 0 0 50%;
+                }
+                .divider {
+                    border: none;
+                    border-top: 1px solid var(--divider-color);
+                    margin: .75em 0;
                 }
                 .no-break {
                     white-space: nowrap;
