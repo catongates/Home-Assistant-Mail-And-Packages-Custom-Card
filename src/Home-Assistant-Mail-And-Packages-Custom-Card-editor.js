@@ -48,6 +48,10 @@ export class MailAndPackagesCardEditor extends LitElement {
         return this._config.packages_delivered || "";
     }
 
+    get _packages_delivering() {
+        return this._config.packages_delivering || "";
+    }
+
     get _packages_in_transit() {
         return this._config.packages_in_transit || "";
     }
@@ -219,6 +223,36 @@ export class MailAndPackagesCardEditor extends LitElement {
                 </paper-dropdown-menu>
               `}
           ${customElements.get("ha-entity-picker")
+            ? html`
+                <ha-entity-picker
+                label="Packages Arriving Sensor"
+                  .hass="${this.hass}"
+                  .value="${this._packages_delivering}"
+                  .configValue=${"packages_delivering"}
+                  domain-filter="sensor"
+                  @change="${this._valueChanged}"
+                  allow-custom-entity
+                ></ha-entity-picker>
+              `
+            : html`
+                <paper-dropdown-menu
+                  label="Packages Arriving Sensor"
+                  @value-changed="${this._valueChanged}"
+                  .configValue="${"packages_delivering"}"
+                >
+                  <paper-listbox
+                    slot="dropdown-content"
+                    .selected="${entities.indexOf(this._packages_delivering)}"
+                  >
+                    ${entities.map((packages_delivering) => {
+                      return html`
+                        <paper-item>${packages_delivering}</paper-item>
+                      `;
+                    })}
+                  </paper-listbox>
+                </paper-dropdown-menu>
+              `}
+              ${customElements.get("ha-entity-picker")
             ? html`
                 <ha-entity-picker
                 label="Packages In Transit Sensor"

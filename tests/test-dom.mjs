@@ -27,7 +27,7 @@ document.body.append(card);
 await card.updateComplete;
 const labels = ['Mail: 1','USPS: 0','UPS: 0','Fedex: 2','Amazon: 0','Walmart: 0','Home Depot: 0'];
 assert.deepEqual([...card.shadowRoot.querySelectorAll('a span')].map(e => e.textContent), labels);
-assert.equal(card.shadowRoot.querySelectorAll('li.item ha-icon').length, 1);
+assert.equal(card.shadowRoot.querySelectorAll('ul.summary li ha-icon').length, 1);
 assert.equal(card.shadowRoot.querySelector('.mail-badge ha-icon').getAttribute('icon'), 'mdi:mailbox-open-up');
 assert.ok(card.shadowRoot.querySelector('style').textContent.includes('background: #29438d'));
 card.hass = {...card.hass, states:{...card.hass.states, 'sensor.mail':{state:'0'}}};

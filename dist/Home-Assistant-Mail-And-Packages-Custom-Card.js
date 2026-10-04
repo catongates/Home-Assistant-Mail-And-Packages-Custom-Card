@@ -85,6 +85,10 @@ class MailAndPackagesCardEditor extends i {
         return this._config.packages_delivered || "";
     }
 
+    get _packages_delivering() {
+        return this._config.packages_delivering || "";
+    }
+
     get _packages_in_transit() {
         return this._config.packages_in_transit || "";
     }
@@ -256,6 +260,36 @@ class MailAndPackagesCardEditor extends i {
                 </paper-dropdown-menu>
               `}
           ${customElements.get("ha-entity-picker")
+            ? b`
+                <ha-entity-picker
+                label="Packages Arriving Sensor"
+                  .hass="${this.hass}"
+                  .value="${this._packages_delivering}"
+                  .configValue=${"packages_delivering"}
+                  domain-filter="sensor"
+                  @change="${this._valueChanged}"
+                  allow-custom-entity
+                ></ha-entity-picker>
+              `
+            : b`
+                <paper-dropdown-menu
+                  label="Packages Arriving Sensor"
+                  @value-changed="${this._valueChanged}"
+                  .configValue="${"packages_delivering"}"
+                >
+                  <paper-listbox
+                    slot="dropdown-content"
+                    .selected="${entities.indexOf(this._packages_delivering)}"
+                  >
+                    ${entities.map((packages_delivering) => {
+                      return b`
+                        <paper-item>${packages_delivering}</paper-item>
+                      `;
+                    })}
+                  </paper-listbox>
+                </paper-dropdown-menu>
+              `}
+              ${customElements.get("ha-entity-picker")
             ? b`
                 <ha-entity-picker
                 label="Packages In Transit Sensor"
@@ -651,7 +685,7 @@ function hasConfigOrEntityChanged(element, changedProps) {
         return true;
     }
     const entityKeys = [
-        "updated", "deliveries_message", "packages_delivered", "packages_in_transit",
+        "updated", "deliveries_message", "packages_delivered", "packages_delivering", "packages_in_transit",
         "fedex_packages", "ups_packages", "usps_packages", "amazon_packages",
         "walmart_packages", "home_depot_packages", "usps_mail", "gif_sensor", "camera_entity"
     ];
@@ -728,6 +762,7 @@ class MailAndPackagesCard extends i {
     renderDetails(stateObj) {
         const deliveries_message = this._config.deliveries_message ? this.hass.states[this._config.deliveries_message]?.state ?? 'unavailable' : false;
         const packages_delivered = this._config.packages_delivered ? this.hass.states[this._config.packages_delivered]?.state ?? 'unavailable' : false;
+        const packages_delivering = this._config.packages_delivering ? this.hass.states[this._config.packages_delivering]?.state ?? 'unavailable' : false;
         const packages_in_transit = this._config.packages_in_transit ? this.hass.states[this._config.packages_in_transit]?.state ?? 'unavailable' : false;
         const fedex_packages = this._config.fedex_packages ? this.hass.states[this._config.fedex_packages]?.state ?? 'unavailable' : false;
         const ups_packages = this._config.ups_packages ? this.hass.states[this._config.ups_packages]?.state ?? 'unavailable' : false;
@@ -751,16 +786,29 @@ class MailAndPackagesCard extends i {
     : ""}
 
     <br>
-    <ul class="items space-evenly">
+    <ul class="items summary space-evenly">
+    ${usps_mail
+        ? b`
+        <li><span class="mail-ha-icon">
+        <span class="mail-badge"><ha-icon icon="mdi:${mail_icon}"></ha-icon></span>
+        </span><a href="https://informeddelivery.usps.com/" title="Open the USPS Informed Delivery site" target="_blank"><span class="no-break">Mail: ${usps_mail}</span></a></li>
+            `
+            : ""}
+    ${packages_delivering
+    ? b`
+    <li><span class="mail-ha-icon"><ha-icon icon="mdi:truck-delivery"></ha-icon>
+    </span>Arriving: ${packages_delivering}</li>
+    `
+    : ""}
     ${packages_delivered
     ? b`
     <li><span class="mail-ha-icon"><ha-icon icon="mdi:package"></ha-icon>
-        </span>Deliveries: ${packages_delivered}</li>
+        </span>Delivered: ${packages_delivered}</li>
     `
     : ""}
     ${packages_in_transit
     ? b`
-    <li><span class="mail-ha-icon"><ha-icon icon="mdi:truck-delivery"></ha-icon>
+    <li><span class="mail-ha-icon"><ha-icon icon="mdi:truck-fast"></ha-icon>
     </span>In Transit: ${packages_in_transit}</li>
     `
     : ""}
@@ -772,13 +820,6 @@ class MailAndPackagesCard extends i {
     `
     : ""}
     <ul class="items carriers">
-    ${usps_mail
-        ? b`
-        <li class="item"><span class="mail-ha-icon">
-        <span class="mail-badge"><ha-icon icon="mdi:${mail_icon}"></ha-icon></span>
-        </span><a href="https://informeddelivery.usps.com/" title="Open the USPS Informed Delivery site" target="_blank"><span class="no-break">Mail: ${usps_mail}</span></a></li>
-            `
-            : ""}
     ${usps_packages
         ? b`
         <li class="item"><span class="mail-ha-icon">

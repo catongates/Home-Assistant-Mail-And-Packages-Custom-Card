@@ -58,7 +58,7 @@ assert.equal(editor.lastEvent.type,'config-changed');
 editor._valueChanged({target:{configValue:'home_depot_packages',value:''}});
 assert.ok(!('home_depot_packages' in editor._config));
 checks++;
-const fields = ['deliveries_message', 'packages_delivered', 'packages_in_transit', 'fedex_packages', 'ups_packages', 'usps_packages', 'amazon_packages', 'usps_mail'];
+const fields = ['deliveries_message', 'packages_delivered', 'packages_delivering', 'packages_in_transit', 'fedex_packages', 'ups_packages', 'usps_packages', 'amazon_packages', 'usps_mail'];
 for (const field of fields) {
   card.setConfig({updated:'sensor.updated', [field]:'sensor.absent', image:false, camera:false});
   assert.ok(card.render().includes('unavailable'), field);
